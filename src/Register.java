@@ -111,7 +111,7 @@ public class Register {
     }
     //5. print receipt to screen
     public static void printReceipt() {
-        int i = 0;
+        int i = 5;
         System.out.println("Printing receipt...");
         for (Item tmp : CashReg.list) {
             //start new line on receipt
