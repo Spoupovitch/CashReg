@@ -42,7 +42,7 @@ public class Register {
                 //check for valid input
                 if (Item.getItem(str) == null)
                     break;
-                for (Item i : CashRegister.list) {
+                for (Item i : CashReg.list) {
                     //add to qty of item present in list
                     if (str.equals(i.name)) {
                         found = true;
@@ -57,14 +57,14 @@ public class Register {
                 }
                 //add new Item to list
                 if (!found) {
-                    CashRegister.list.add(Item.getItem(str));
+                    CashReg.list.add(Item.getItem(str));
                     System.out.print("Quantity to sell: ");
                     try {
                         qty = scan.nextInt();
-                        CashRegister.list.get(CashRegister.list.size()-1).quant
+                        CashReg.list.get(CashReg.list.size()-1).quant
                                 += qty;
                     } catch (InputMismatchException ex) {
-                        CashRegister.list.get(CashRegister.list.size()-1).quant
+                        CashReg.list.get(CashReg.list.size()-1).quant
                                 += 1;
                     }
                 }
@@ -82,8 +82,8 @@ public class Register {
     }
     //3. void last transaction
     public static void voidLastTrans() {
-        if (!CashRegister.list.isEmpty()) {
-            CashRegister.list.remove(CashRegister.list.size() - 1);
+        if (!CashReg.list.isEmpty()) {
+            CashReg.list.remove(CashReg.list.size() - 1);
             subtotal -= lastTrans;
             System.out.println("Previous transaction has been voided.");
         } else {
@@ -92,12 +92,12 @@ public class Register {
     }
     //4. void items from list
     public void voidItems(String str, int qty){
-        for (Item tmp : CashRegister.list) {
+        for (Item tmp : CashReg.list) {
             //found requested item in list
             if (tmp.name.equals(str)) {
                 //remove item from list entirely
                 if (qty >= tmp.quant) {
-                    CashRegister.list.remove(tmp);
+                    CashReg.list.remove(tmp);
                     System.out.printf("%s removed from list.\n", tmp.name);
                 }
                 //reduce portion of given item's quantity
@@ -113,7 +113,7 @@ public class Register {
     public static void printReceipt() {
         int i = 0;
         System.out.println("Printing receipt...");
-        for (Item tmp : CashRegister.list) {
+        for (Item tmp : CashReg.list) {
             //start new line on receipt
             if (i % 4 == 0) {
                 System.out.println();
