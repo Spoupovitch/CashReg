@@ -10,17 +10,17 @@ import java.util.Scanner;
 
 public class Register {
 
-    private static final double tax = 0.07;
-    public static double subtotal;
-    private static double lastTrans;
-    private ArrayList<Item> list = new ArrayList<>();
+    private final double tax = 0.07;
+    private double subtotal;
+    private double lastTransAmt;
 
     Scanner scan = new Scanner(System.in);
+    private ArrayList<Item> list = new ArrayList<>();
     public static ArrayList<Item> inventory = new ArrayList<>();
 
     public Register() {
         subtotal = 0;
-        lastTrans = 0;
+        lastTransAmt = 0;
         buildInventory();
     }
     //1. enter loop to scan in items
@@ -55,6 +55,8 @@ public class Register {
                         } catch (InputMismatchException ex) {
                             i.quant += 1;
                         }
+                        //add item's value to subtotal
+                        sell(i);
                     }
                 }
                 //add new Item to list
@@ -63,30 +65,31 @@ public class Register {
                     System.out.print("Quantity to sell: ");
                     try {
                         qty = scan.nextInt();
-                        list.get(list.size()-1).quant
-                                += qty;
+                        list.get(list.size() - 1).quant += qty;
                     } catch (InputMismatchException ex) {
-                        list.get(list.size()-1).quant
-                                += 1;
+                        list.get(list.size() - 1).quant += 1;
                     }
+                    //add item's value to subtotal
+                    sell(list.get(list.size() - 1));
                 }
             }
         }
     }
-    //add single item to list and add price to total
+    //logic for applying item value to receipt
     public void sell(Item i) {
-        subtotal += i.price;
+        subtotal += lastTransAmt = i.price * i.quant;
     }
     //2. ring up all items
     public void checkout() {
-        System.out.printf("\nSubtotal:\t$%02d\nTax:\t$%02d\nTotal:\t$%02d\n",
-                subtotal, subtotal*tax, subtotal + subtotal*tax);
+        //openRegister();
+        printReceipt();
+        //newCheck();
     }
     //3. void last transaction
     public void voidLastTrans() {
         if (!list.isEmpty()) {
             list.remove(list.size() - 1);
-            subtotal -= lastTrans;
+            subtotal -= lastTransAmt;
             System.out.println("Previous transaction has been voided.");
         } else {
             System.out.println("List is currently empty.");
