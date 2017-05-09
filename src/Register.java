@@ -13,6 +13,7 @@ public class Register {
     private static final double tax = 0.07;
     public static double subtotal;
     private static double lastTrans;
+    private ArrayList<Item> list = new ArrayList<>();
 
     Scanner scan = new Scanner(System.in);
     public static ArrayList<Item> inventory = new ArrayList<>();
@@ -20,6 +21,7 @@ public class Register {
     public Register() {
         subtotal = 0;
         lastTrans = 0;
+        buildInventory();
     }
     //1. enter loop to scan in items
     public void scanItems() {
@@ -42,7 +44,7 @@ public class Register {
                 //check for valid input
                 if (Item.getItem(str) == null)
                     break;
-                for (Item i : CashReg.list) {
+                for (Item i : list) {
                     //add to qty of item present in list
                     if (str.equals(i.name)) {
                         found = true;
@@ -57,14 +59,14 @@ public class Register {
                 }
                 //add new Item to list
                 if (!found) {
-                    CashReg.list.add(Item.getItem(str));
+                    list.add(Item.getItem(str));
                     System.out.print("Quantity to sell: ");
                     try {
                         qty = scan.nextInt();
-                        CashReg.list.get(CashReg.list.size()-1).quant
+                        list.get(list.size()-1).quant
                                 += qty;
                     } catch (InputMismatchException ex) {
-                        CashReg.list.get(CashReg.list.size()-1).quant
+                        list.get(list.size()-1).quant
                                 += 1;
                     }
                 }
@@ -81,9 +83,9 @@ public class Register {
                 subtotal, subtotal*tax, subtotal + subtotal*tax);
     }
     //3. void last transaction
-    public static void voidLastTrans() {
-        if (!CashReg.list.isEmpty()) {
-            CashReg.list.remove(CashReg.list.size() - 1);
+    public void voidLastTrans() {
+        if (!list.isEmpty()) {
+            list.remove(list.size() - 1);
             subtotal -= lastTrans;
             System.out.println("Previous transaction has been voided.");
         } else {
@@ -92,12 +94,12 @@ public class Register {
     }
     //4. void items from list
     public void voidItems(String str, int qty){
-        for (Item tmp : CashReg.list) {
+        for (Item tmp : list) {
             //found requested item in list
             if (tmp.name.equals(str)) {
                 //remove item from list entirely
                 if (qty >= tmp.quant) {
-                    CashReg.list.remove(tmp);
+                    list.remove(tmp);
                     System.out.printf("%s removed from list.\n", tmp.name);
                 }
                 //reduce portion of given item's quantity
@@ -110,10 +112,10 @@ public class Register {
         }
     }
     //5. print receipt to screen
-    public static void printReceipt() {
+    public void printReceipt() {
         int i = 0;
         System.out.println("Printing receipt...");
-        for (Item tmp : CashReg.list) {
+        for (Item tmp : list) {
             //start new line on receipt
             if (i % 4 == 0) {
                 System.out.println();
@@ -124,12 +126,10 @@ public class Register {
                 subtotal, subtotal*tax, subtotal + tax*subtotal);
     }
     //compile inventory
-    public static ArrayList buildInventory() {
+    public void buildInventory() {
         inventory.add(Item.grapes);
         inventory.add(Item.bananas);
         inventory.add(Item.bread);
         inventory.add(Item.rice);
-
-        return inventory;
     }
 }
