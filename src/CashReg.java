@@ -29,15 +29,15 @@ public class CashReg {
             System.out.println("\t4 Void Items");
             System.out.println("\t5 Print Current Items");
             System.out.println("\t6 Exit");
-            int x;
-            cases = scan.nextInt();
 
+            cases = scan.nextInt();
+            int test;
             switch (cases) {
                 case 1:
                     register.scanItems();
                     break;
                 case 2:
-                    register.checkout();
+                    register.printReceipt();
                     break;
                 case 3:
                     register.voidLastTrans();
@@ -50,7 +50,7 @@ public class CashReg {
                     register.voidItems(str, qty);
                     break;
                 case 5:
-                    register.printReceipt();
+                    register.printCurrentItems();
                     break;
                 case 6:
                     loop = false;
