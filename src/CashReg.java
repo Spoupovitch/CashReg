@@ -20,8 +20,6 @@ public class CashReg {
         Register register = new Register();
         Register register2 = new Register();
 
-        Register.buildInventory();
-
         while (loop) {
             System.out.println("Main Menu");
             System.out.println("------------------------");
