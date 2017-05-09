@@ -114,9 +114,17 @@ public class Register {
             }
         }
     }
+
+    public void printCurrentItems()
+    {
+        for(Item item : list)
+        {
+            System.out.println(item.name + ": " + item.quant);
+        }
+    }
     //5. print receipt to screen
     public void printReceipt() {
-        int i = 0;
+        /*int i = 0;
         System.out.println("Printing receipt...");
         for (Item tmp : list) {
             //start new line on receipt
@@ -126,7 +134,8 @@ public class Register {
             System.out.printf("%d : %s - %d\t", ++i, tmp.name, tmp.quant);
         }
         System.out.printf("\nSubtotal:\t$%02d\nTax:\t$%02d\nTotal:\t$%02d",
-                subtotal, subtotal*tax, subtotal + tax*subtotal);
+                subtotal, subtotal*tax, subtotal + tax*subtotal);*/
+        System.out.println(subtotal);
     }
     //compile inventory
     public void buildInventory() {
