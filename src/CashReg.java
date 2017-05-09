@@ -31,7 +31,7 @@ public class CashReg {
             System.out.println("\t6 Exit");
 
             cases = scan.nextInt();
-            int test;
+            
             switch (cases) {
                 case 1:
                     register.scanItems();
