@@ -4,12 +4,9 @@
  * and open the template in the editor.
  */
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class CashReg {
-
-
 
     public static void main(String[] args) {
         String str;
@@ -18,7 +15,6 @@ public class CashReg {
 
         Scanner scan = new Scanner(System.in);
         Register register = new Register();
-        Register register2 = new Register();
 
         while (loop) {
             System.out.println("Main Menu");
@@ -60,7 +56,6 @@ public class CashReg {
                     break;
             }
         }
-        register2.printReceipt();
         System.out.println("Have a shit day!");
     }
 }
