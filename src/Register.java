@@ -77,7 +77,7 @@ public class Register {
     }
     //logic for applying item value to receipt
     public void sell(Item i) {
-        subtotal += lastTransAmt = i.price * i.quant;
+        subtotal +=  i.price * i.quant;
     }
     //2. ring up all items
     public void checkout() {
@@ -88,7 +88,9 @@ public class Register {
     //3. void last transaction
     public void voidLastTrans() {
         if (!list.isEmpty()) {
-            list.remove(list.size() - 1);
+            int lastIndex = list.size() - 1;
+            lastTransAmt = (list.get(lastIndex).price)*(list.get(lastIndex).quant);
+            list.remove(lastIndex);
             subtotal -= lastTransAmt;
             System.out.println("Previous transaction has been voided.");
         } else {
