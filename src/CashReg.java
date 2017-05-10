@@ -1,16 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import java.util.Scanner;
 
 public class CashReg {
 
     public static void main(String[] args) {
         String str;
-        int qty, cases;
+        int qty, cmd;
         boolean loop = true;
 
         Scanner scan = new Scanner(System.in);
@@ -26,14 +20,14 @@ public class CashReg {
             System.out.println("\t5 Print Current Items");
             System.out.println("\t6 Exit");
 
-            cases = scan.nextInt();
-            
-            switch (cases) {
+            cmd = scan.nextInt();
+
+            switch (cmd) {
                 case 1:
                     register.scanItems();
                     break;
                 case 2:
-                    register.printReceipt();
+                    register.checkout();
                     break;
                 case 3:
                     register.voidLastTrans();
@@ -46,7 +40,7 @@ public class CashReg {
                     register.voidItems(str, qty);
                     break;
                 case 5:
-                    register.printCurrentItems();
+                    register.printReceipt();
                     break;
                 case 6:
                     loop = false;

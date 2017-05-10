@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -12,7 +6,6 @@ public class Register {
 
     private final double tax = 0.07;
     private double subtotal;
-    private double lastTransAmt;
 
     Scanner scan = new Scanner(System.in);
     private ArrayList<Item> list = new ArrayList<>();
@@ -20,7 +13,6 @@ public class Register {
 
     public Register() {
         subtotal = 0;
-        lastTransAmt = 0;
         buildInventory();
     }
     //1. enter loop to scan in items
@@ -34,50 +26,60 @@ public class Register {
                 + "\tEnter /t to finish ringing items in.\n");
         while (loop) {
             System.out.println("Scanning items...");
-            if (scan.hasNext("/v")) {
-                str = scan.next();
+            str = scan.next();
+            if (str.equals("/v")) {
                 voidLastTrans();
-            } else if (scan.hasNext("/t")) {
+            }
+            else if (str.equals("/t")) {
                 loop = false;
-            } else {
-                str = scan.next();
+            }
+            else {
                 //check for valid input
                 if (Item.getItem(str) == null)
                     break;
-                for (Item i : list) {
+                for (Item tmp : list) {
                     //add to qty of item present in list
-                    if (str.equals(i.name)) {
+                    if (str.equals(tmp.name)) {
                         found = true;
                         System.out.print("Quantity to sell: ");
                         try {
                             qty = scan.nextInt();
-                            i.quant += qty;
-                        } catch (InputMismatchException ex) {
-                            i.quant += 1;
+                            tmp.quant += qty;
+                        }
+                        //add 1 to quantity if exception thrown
+                        catch (InputMismatchException ex) {
+                            tmp.quant += 1;
                         }
                         //add item's value to subtotal
-                        sell(i);
+                        sell(tmp);
                     }
                 }
-                //add new Item to list
+                //add new item to list
                 if (!found) {
                     list.add(Item.getItem(str));
+                    int last = list.size() - 1;
                     System.out.print("Quantity to sell: ");
                     try {
                         qty = scan.nextInt();
-                        list.get(list.size() - 1).quant += qty;
-                    } catch (InputMismatchException ex) {
-                        list.get(list.size() - 1).quant += 1;
+                        list.get(last).quant += qty;
+                    }
+                    //add 1 to quantity if exception thrown
+                    catch (InputMismatchException ex) {
+                        list.get(last).quant += 1;
                     }
                     //add item's value to subtotal
-                    sell(list.get(list.size() - 1));
+                    sell(list.get(last));
                 }
             }
         }
     }
     //logic for applying item value to receipt
     public void sell(Item i) {
-        subtotal +=  i.price * i.quant;
+        subtotal += i.price * i.quant;
+    }
+    //subtract item value from receipt
+    public void voidItem(Item i) {
+        subtotal -= i.price * i.quant;
     }
     //2. ring up all items
     public void checkout() {
@@ -87,57 +89,49 @@ public class Register {
     }
     //3. void last transaction
     public void voidLastTrans() {
-        if (!list.isEmpty()) {
-            int lastIndex = list.size() - 1;
-            lastTransAmt = (list.get(lastIndex).price)*(list.get(lastIndex).quant);
-            list.remove(lastIndex);
-            subtotal -= lastTransAmt;
-            System.out.println("Previous transaction has been voided.");
-        } else {
+        if (list.isEmpty()) {
             System.out.println("List is currently empty.");
+        }
+        else {
+            int tail = list.size() - 1;
+            //reduce subtotal
+            voidItem(list.get(tail));
+            list.remove(tail);
+            System.out.println("Previous transaction has been voided.");
         }
     }
     //4. void items from list
-    public void voidItems(String str, int qty){
+    public void voidItems(String str, int qty) {
         for (Item tmp : list) {
             //found requested item in list
             if (tmp.name.equals(str)) {
                 //remove item from list entirely
                 if (qty >= tmp.quant) {
+                    //adjust subtotal
+                    voidItem(tmp);
                     list.remove(tmp);
-                    System.out.printf("%s removed from list.\n", tmp.name);
+                    System.out.println(str + " removed from list.");
                 }
                 //reduce portion of given item's quantity
                 else {
                     tmp.quant -= qty;
-                    System.out.printf("%s quantity reduced to %d",
+                    //subtract appropriate amt from subtotal
+                    subtotal -= tmp.price * qty;
+                    System.out.printf("%s quantity reduced to %d\n",
                             tmp.name, tmp.quant);
                 }
             }
         }
     }
-
-    public void printCurrentItems()
-    {
-        for(Item item : list)
-        {
-            System.out.println(item.name + ": " + item.quant);
-        }
-    }
     //5. print receipt to screen
     public void printReceipt() {
-        /*int i = 0;
-        System.out.println("Printing receipt...");
+        System.out.println("Printing receipt...\n");
         for (Item tmp : list) {
-            //start new line on receipt
-            if (i % 4 == 0) {
-                System.out.println();
-            }
-            System.out.printf("%d : %s - %d\t", ++i, tmp.name, tmp.quant);
+            System.out.printf("%s\t\t%d\n", tmp.name, tmp.quant);
         }
-        System.out.printf("\nSubtotal:\t$%02d\nTax:\t$%02d\nTotal:\t$%02d",
-                subtotal, subtotal*tax, subtotal + tax*subtotal);*/
-        System.out.println(subtotal);
+        System.out.printf("____________________"
+                + "\nSubtotal:\t$%.2f\nTax:\t$%.2f\nTotal:\t$%.2f\n\n",
+                subtotal, subtotal*tax, subtotal + tax*subtotal);
     }
     //compile inventory
     public void buildInventory() {
