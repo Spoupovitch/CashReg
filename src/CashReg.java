@@ -19,7 +19,7 @@ public class CashReg {
             System.out.println("\t4 Void Items");
             System.out.println("\t5 Print Current Items");
             System.out.println("\t6 Exit");
-
+            int x;
             cases = scan.nextInt();
 
             switch (cases) {
