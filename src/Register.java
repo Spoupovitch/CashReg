@@ -36,24 +36,33 @@ public class Register {
             else {
                 //check for valid input
                 if (Item.getItem(str) == null)
-                    break;
-                for (Item tmp : list) {
-                    //add to qty of item present in list
-                    if (str.equals(tmp.name)) {
-                        found = true;
-                        System.out.print("Quantity to sell: ");
-                        try {
-                            qty = scan.nextInt();
-                            tmp.quant += qty;
-                        }
-                        //add 1 to quantity if exception thrown
-                        catch (InputMismatchException ex) {
-                            tmp.quant += qty = 1;
-                        }
-                        //add item's value to subtotal
-                        sell(tmp, qty);
-                    }
+                {
+                    continue;
                 }
+                for (Item tmp : list) {
+                        found = false;
+                        //add to qty of item present in list
+                        if (str.equals(tmp.name)) {
+                            found = true;
+                            System.out.print("Quantity to sell: ");
+                            try {
+                                qty = scan.nextInt();
+                                while(qty < 0)
+                                {
+                                    System.out.println("Enter a valid positive number you degenerate:");
+                                    qty = scan.nextInt();
+                                }
+                                tmp.quant += qty;
+                            }
+                            //add 1 to quantity if exception thrown
+                            catch (InputMismatchException ex) {
+                                tmp.quant += qty = 1;
+                            }
+                            //add item's value to subtotal
+                            sell(tmp, qty);
+                            break;
+                        }
+                    }
                 //add new item to list
                 if (!found) {
                     list.add(Item.getItem(str));
@@ -61,6 +70,11 @@ public class Register {
                     System.out.print("Quantity to sell: ");
                     try {
                         qty = scan.nextInt();
+                        while(qty < 0)
+                        {
+                            System.out.println("Enter a valid positive number you degenerate:");
+                            qty = scan.nextInt();
+                        }
                         list.get(last).quant += qty;
                     }
                     //add 1 to quantity if exception thrown
