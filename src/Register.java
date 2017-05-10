@@ -48,10 +48,10 @@ public class Register {
                         }
                         //add 1 to quantity if exception thrown
                         catch (InputMismatchException ex) {
-                            tmp.quant += 1;
+                            tmp.quant += qty = 1;
                         }
                         //add item's value to subtotal
-                        sell(tmp);
+                        sell(tmp, qty);
                     }
                 }
                 //add new item to list
@@ -65,21 +65,21 @@ public class Register {
                     }
                     //add 1 to quantity if exception thrown
                     catch (InputMismatchException ex) {
-                        list.get(last).quant += 1;
+                        list.get(last).quant += qty = 1;
                     }
                     //add item's value to subtotal
-                    sell(list.get(last));
+                    sell(list.get(last), qty);
                 }
             }
         }
     }
-    //logic for applying item value to receipt
-    public void sell(Item i) {
-        subtotal += i.price * i.quant;
+    //add item value to receipt based on input quantity
+    public void sell(Item i, int qty) {
+        subtotal += i.price * qty;
     }
-    //subtract item value from receipt
-    public void voidItem(Item i) {
-        subtotal -= i.price * i.quant;
+    //subtract item value from receipt based on input quantity
+    public void voidItem(Item i, int qty) {
+        subtotal -= i.price * qty;
     }
     //2. ring up all items
     public void checkout() {
@@ -95,9 +95,9 @@ public class Register {
         else {
             int tail = list.size() - 1;
             //reduce subtotal
-            voidItem(list.get(tail));
+            voidItem(list.get(tail), list.get(tail).quant);
             list.remove(tail);
-            System.out.println("Previous transaction has been voided.");
+            System.out.println("Last sale has been voided.");
         }
     }
     //4. void items from list
@@ -108,7 +108,7 @@ public class Register {
                 //remove item from list entirely
                 if (qty >= tmp.quant) {
                     //adjust subtotal
-                    voidItem(tmp);
+                    voidItem(tmp, tmp.quant);
                     list.remove(tmp);
                     System.out.println(str + " removed from list.");
                 }
@@ -116,8 +116,8 @@ public class Register {
                 else {
                     tmp.quant -= qty;
                     //subtract appropriate amt from subtotal
-                    subtotal -= tmp.price * qty;
-                    System.out.printf("%s quantity reduced to %d\n",
+                    voidItem(tmp, qty);
+                    System.out.printf("%s quantity reduced to %d.\n",
                             tmp.name, tmp.quant);
                 }
             }
