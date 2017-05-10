@@ -83,9 +83,18 @@ public class Register {
     }
     //2. ring up all items
     public void checkout() {
-        //openRegister();
-        printReceipt();
-        //newCheck();
+        System.out.println("Would you like a receipt? Yes or No");
+        String str = scan.next();
+
+        if( str.equals("Yes") || str.equals("yes"))
+        {
+            printReceipt();
+            System.out.println("Thanks for shopping here ya fuck face!");
+            return;
+        }
+
+        System.out.println("Thanks, and get the fuck outta here asshole.");
+
     }
     //3. void last transaction
     public void voidLastTrans() {
