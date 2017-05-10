@@ -11,7 +11,7 @@ public class CashReg {
         Register register = new Register();
 
         while (loop) {
-            System.out.println("Main Menu");
+            System.out.println("GFY Market + Grocery");
             System.out.println("------------------------");
             System.out.println("\t1 Ring in Items");
             System.out.println("\t2 Checkout");
@@ -35,7 +35,7 @@ public class CashReg {
                 case 4:
                     System.out.println("Enter item to void: ");
                     str = scan.next();
-                    System.out.println("Enter quantity to void: ");
+                    System.out.print("Quantity to void: ");
                     qty = scan.nextInt();
                     register.voidItems(str, qty);
                     break;
