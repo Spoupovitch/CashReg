@@ -4,7 +4,7 @@ public class CashReg {
 
     public static void main(String[] args) {
         String str;
-        int qty, cases;
+        int qty, cmd;
         boolean loop = true;
 
         Scanner scan = new Scanner(System.in);
@@ -20,9 +20,9 @@ public class CashReg {
             System.out.println("\t5 Print Current Items");
             System.out.println("\t6 Exit");
 
-            cases = scan.nextInt();
+            cmd = scan.nextInt();
 
-            switch (cases) {
+            switch (cmd) {
                 case 1:
                     register.scanItems();
                     break;
