@@ -89,11 +89,11 @@ public class Register {
     }
     //add item value to receipt based on input quantity
     public void sell(Item i, int qty) {
-        subtotal += i.price * qty;
+        subtotal += i.price * (1 - i.sale) * qty;
     }
     //subtract item value from receipt based on input quantity
     public void voidItem(Item i, int qty) {
-        subtotal -= i.price * qty;
+        subtotal -= i.price * (1 - i.sale) * qty;
     }
     //2. ring up all items
     public void checkout() {
