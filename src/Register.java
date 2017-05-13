@@ -106,12 +106,12 @@ public class Register {
             System.out.println("Thanks for shopping here ya fuck face!");
             return;
         }
-
-        System.out.println("Thanks, and get the fuck outta here asshole.");
-
+        list.clear();
+        System.out.println("Thanks and get the fuck outta here, asshole.");
     }
     //3. void last transaction
     public void voidLastTrans() {
+        //loop?
         if (list.isEmpty()) {
             System.out.println("List is currently empty.");
         }
