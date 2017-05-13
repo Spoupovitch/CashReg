@@ -104,9 +104,12 @@ public class Register {
         {
             printReceipt();
             System.out.println("Thanks for shopping here ya fuck face!");
+            list.clear();
+            subtotal = 0;
             return;
         }
         list.clear();
+        subtotal = 0;
         System.out.println("Thanks and get the fuck outta here, asshole.");
     }
     //3. void last transaction
@@ -149,6 +152,8 @@ public class Register {
     //5. print receipt to screen
     public void printReceipt() {
         System.out.println("Printing receipt...\n");
+        if (list.isEmpty())
+            System.out.println("No items on check.");
         for (Item tmp : list) {
             System.out.printf("%s\t\t%d\n", tmp.name, tmp.quant);
         }
