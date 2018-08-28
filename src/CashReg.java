@@ -1,55 +1,75 @@
-import java.util.Scanner;
+//import java.util.Scanner;
 
-public class CashReg {
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+
+public class CashReg extends Application {
+    Label welcome;
+    Button startBtn;
+
+    Button backBtn;
+
+    Scene home;
+    Scene checkout;
+
+    Stage mainStage;
+
+    Register register = new Register();
 
     public static void main(String[] args) {
-        String str;
-        int qty, cmd;
-        boolean loop = true;
+        launch(args);
+    }
 
-        Scanner scan = new Scanner(System.in);
-        Register register = new Register();
+    @Override
+    public void start(Stage primaryStage) {
+        mainStage = primaryStage;
+        mainStage.setTitle("GFY Market");
 
-        while (loop) {
-            System.out.println("GFY Market + Grocery");
-            System.out.println("------------------------");
-            System.out.println("\t1 Ring in Items");
-            System.out.println("\t2 Checkout");
-            System.out.println("\t3 Void Last Item");
-            System.out.println("\t4 Void Items");
-            System.out.println("\t5 Print Current Items");
-            System.out.println("\t6 Exit");
+        //close method
+        primaryStage.setOnCloseRequest(e -> {
+            e.consume();
+            confirmClose();
+        });
 
-            cmd = scan.nextInt();
+        //home screen elements
+        welcome = new Label("Click below to begin checkout");
 
-            switch (cmd) {
-                case 1:
-                    register.scanItems();
-                    break;
-                case 2:
-                    register.checkout();
-                    break;
-                case 3:
-                    register.voidLastTrans();
-                    break;
-                case 4:
-                    System.out.println("Enter item to void: ");
-                    str = scan.next();
-                    System.out.print("Quantity to void: ");
-                    qty = scan.nextInt();
-                    register.voidItems(str, qty);
-                    break;
-                case 5:
-                    register.printReceipt();
-                    break;
-                case 6:
-                    loop = false;
-                    break;
-                default:
-                    System.out.println("Invalid input, dipshit.");
-                    break;
-            }
-        }
-        System.out.println("Have a shit day!");
+        startBtn = new Button("Checkout");
+        startBtn.setOnAction(e -> mainStage.setScene(checkout));
+
+
+        //checkout screen elements
+        backBtn = new Button("<-");
+        backBtn.setOnAction(e -> mainStage.setScene(home));
+
+        //home layout
+        VBox homeLayout = new VBox();
+        homeLayout.getChildren().addAll(welcome, startBtn);
+
+        //checkout layout
+        VBox checkoutLayout = new VBox();
+        checkoutLayout.getChildren().addAll(backBtn);
+
+        //set home scene
+        home = new Scene(homeLayout, 300, 250);
+        mainStage.setScene(home);
+        mainStage.show();
+
+        //set checkout scene
+        checkout = new Scene(checkoutLayout, 450, 650);
+    }
+
+    //confirm request to exit
+    private void confirmClose() {
+        Boolean answer = ConfirmPrompt.display("Confirm close", "Are you sure you would like to exit?");
+        if (answer)
+            mainStage.close();
     }
 }
