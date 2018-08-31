@@ -1,6 +1,5 @@
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
+
 
 public class Register {
 
@@ -8,13 +7,14 @@ public class Register {
     private double subtotal;
 
     Scanner scan = new Scanner(System.in);
-    private ArrayList<Item> list = new ArrayList<>();
+    public ArrayList<Item> itemList;
     public static ArrayList<Item> inventory = new ArrayList<>();
 
     public Register() {
         subtotal = 0;
-        buildInventory();
+        itemList = new ArrayList<>();
     }
+
     //1. enter loop to scan in items
     public void scanItems() {
         String str;
@@ -39,7 +39,7 @@ public class Register {
                 {
                     continue;
                 }
-                for (Item tmp : list) {
+                for (Item tmp : itemList) {
                         found = false;
                         //add to qty of item present in list
                         if (str.equals(tmp.name)) {
@@ -52,11 +52,11 @@ public class Register {
                                     System.out.println("Enter a valid positive number you degenerate:");
                                     qty = scan.nextInt();
                                 }
-                                tmp.quant += qty;
+                                tmp.quantity += qty;
                             }
                             //add 1 to quantity if exception thrown
                             catch (InputMismatchException ex) {
-                                tmp.quant += qty = 1;
+                                tmp.quantity += qty = 1;
                             }
                             //add item's value to subtotal
                             sell(tmp, qty);
@@ -65,8 +65,8 @@ public class Register {
                     }
                 //add new item to list
                 if (!found) {
-                    list.add(Item.getItem(str));
-                    int last = list.size() - 1;
+                    itemList.add(Item.getItem(str));
+                    int last = itemList.size() - 1;
                     System.out.print("Quantity to sell: ");
                     try {
                         qty = scan.nextInt();
@@ -75,26 +75,30 @@ public class Register {
                             System.out.println("Enter a valid positive number you degenerate: ");
                             qty = scan.nextInt();
                         }
-                        list.get(last).quant += qty;
+                        itemList.get(last).quantity += qty;
                     }
                     //add 1 to quantity if exception thrown
                     catch (InputMismatchException ex) {
-                        list.get(last).quant += qty = 1;
+                        itemList.get(last).quantity += qty = 1;
                     }
                     //add item's value to subtotal
-                    sell(list.get(last), qty);
+                    sell(itemList.get(last), qty);
                 }
             }
         }
     }
+
     //add item value to receipt based on input quantity
-    public void sell(Item i, int qty) {
-        subtotal += i.price * (1 - i.sale) * qty;
+    public void sell(Item item, int qty) {
+        subtotal += item.price * (1 - item.sale) * qty;
+        itemList.add(item);
     }
+
     //subtract item value from receipt based on input quantity
-    public void voidItem(Item i, int qty) {
-        subtotal -= i.price * (1 - i.sale) * qty;
+    public void voidItem(Item item, int qty) {
+        subtotal -= item.price * (1 - item.sale) * qty;
     }
+
     //2. ring up all items
     public void checkout() {
         System.out.println("Would you like a receipt? Yes or No");
@@ -109,54 +113,57 @@ public class Register {
         System.out.println("Thank you, have a great day!");
 
     }
+
     //3. void last transaction
     public void voidLastTrans() {
-        if (list.isEmpty()) {
+        if (itemList.isEmpty()) {
             System.out.println("List is currently empty.");
         }
         else {
-            int tail = list.size() - 1;
+            int tail = itemList.size() - 1;
             //reduce subtotal
-            voidItem(list.get(tail), list.get(tail).quant);
-            list.remove(tail);
+            voidItem(itemList.get(tail), itemList.get(tail).quantity);
+            itemList.remove(tail);
             System.out.println("Last sale has been voided.");
         }
     }
+
     //4. void items from list
     public void voidItems(String str, int qty) {
-        for (Item tmp : list) {
+        for (Item tmp : itemList) {
             //found requested item in list
             if (tmp.name.equals(str)) {
                 //remove item from list entirely
-                if (qty >= tmp.quant) {
+                if (qty >= tmp.quantity) {
                     //adjust subtotal
-                    voidItem(tmp, tmp.quant);
-                    list.remove(tmp);
+                    voidItem(tmp, tmp.quantity);
+                    itemList.remove(tmp);
                     System.out.println(str + " removed from list.");
                 }
                 //reduce portion of given item's quantity
                 else {
-                    tmp.quant -= qty;
+                    tmp.quantity -= qty;
                     //subtract appropriate amt from subtotal
                     voidItem(tmp, qty);
                     System.out.printf("%s quantity reduced to %d.\n",
-                            tmp.name, tmp.quant);
+                            tmp.name, tmp.quantity);
                 }
             }
         }
     }
+
     //5. print receipt to screen
     public void printReceipt() {
         System.out.println("Printing receipt...\n");
-        for (Item tmp : list) {
-            System.out.printf("%s\t\t%d\n", tmp.name, tmp.quant);
+        for (Item tmp : itemList) {
         }
         System.out.printf("____________________"
                 + "\nSubtotal:\t$%.2f\nTax:\t$%.2f\nTotal:\t$%.2f\n\n",
                 subtotal, subtotal*tax, subtotal + tax*subtotal);
     }
+
     //compile inventory
-    public void buildInventory() {
+    public static void buildInventory() {
         inventory.add(Item.grapes);
         inventory.add(Item.bananas);
         inventory.add(Item.bread);

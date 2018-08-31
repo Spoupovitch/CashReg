@@ -1,21 +1,41 @@
 public class Item {
 
-    public String name;
+    public static String name;
     public double price;
     public double sale = 0;
-    public int quant = 0;
+    public int quantity = 0;
 
     //Item constructor, not on sale
     public Item(String n, double p) {
         this.name = n;
         this.price = p;
+        this.sale = 0;
+        this.quantity = 0;
     }
     //Item constructor, third param is sale percentage
     public Item(String n, double p, double s) {
         this.name = n;
         this.price = p;
         this.sale = s;
+        this.quantity = 0;
     }
+    public static String getName() {
+        return name;
+    }
+    public double getPrice() {
+        return price;
+    }
+    public double getSale() {
+        return sale;
+    }
+    public int getQuant() {
+        return quantity;
+    }
+    public void setQuant(int qty) {
+        this.quantity = qty;
+    }
+
+
     //produce
     static Item grapes = new Item("grapes", 1.60);
     static Item bananas = new Item("bananas", .99);
@@ -44,4 +64,5 @@ public class Item {
         System.out.println("Error: Item not found in inventory.");
         return null;
     }
+
 }
