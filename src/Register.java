@@ -4,15 +4,16 @@ import java.util.*;
 public class Register {
 
     private final double tax = 0.07;
-    private double subtotal;
+    public double subtotal;
 
     Scanner scan = new Scanner(System.in);
     public ArrayList<Item> itemList;
-    public static ArrayList<Item> inventory = new ArrayList<>();
+    public ArrayList<Item> inventory;
 
     public Register() {
-        subtotal = 0;
+        subtotal = 0.0;
         itemList = new ArrayList<>();
+        buildInventory();
     }
 
     //1. enter loop to scan in items
@@ -21,9 +22,6 @@ public class Register {
         int qty;
         boolean loop = true, found = false;
 
-        System.out.println("Type items to sell one at a time.\n"
-                + "\tEnter /v to void last transaction.\n"
-                + "\tEnter /t to finish ringing items in.\n");
         while (loop) {
             System.out.println("Scanning items...");
             str = scan.next();
@@ -35,7 +33,7 @@ public class Register {
             }
             else {
                 //check for valid input
-                if (Item.getItem(str) == null)
+                if (getItem(str) == null)
                 {
                     continue;
                 }
@@ -59,13 +57,13 @@ public class Register {
                                 tmp.quantity += qty = 1;
                             }
                             //add item's value to subtotal
-                            sell(tmp, qty);
+                            sell(str, qty);
                             break;
                         }
                     }
                 //add new item to list
                 if (!found) {
-                    itemList.add(Item.getItem(str));
+                    itemList.add(getItem(str));
                     int last = itemList.size() - 1;
                     System.out.print("Quantity to sell: ");
                     try {
@@ -82,16 +80,36 @@ public class Register {
                         itemList.get(last).quantity += qty = 1;
                     }
                     //add item's value to subtotal
-                    sell(itemList.get(last), qty);
+                    sell(str, qty);
                 }
             }
         }
     }
 
     //add item value to receipt based on input quantity
-    public void sell(Item item, int qty) {
-        subtotal += item.price * (1 - item.sale) * qty;
-        itemList.add(item);
+    public void sell(String itemName, int qty) {
+        Item item = getItem(itemName);
+
+        if (item == null) {
+            return;
+        }
+        //check whether item exists in item list
+        else if (itemList.contains(item)) {
+            int index = itemList.indexOf(item);
+            //add qty to item's quantity
+            itemList.get(index).quantity += qty;
+            //modify subtotal
+            subtotal += item.price * (1 - item.sale) * qty;
+            printItemList();
+        }
+        else {
+            //add qty to item's quantity
+            item.quantity += qty;
+            itemList.add(item);
+            //modify subtotal
+            subtotal += item.price * (1 - item.sale) * qty;
+            printItemList();
+        }
     }
 
     //subtract item value from receipt based on input quantity
@@ -146,7 +164,7 @@ public class Register {
                     //subtract appropriate amt from subtotal
                     voidItem(tmp, qty);
                     System.out.printf("%s quantity reduced to %d.\n",
-                            tmp.name, tmp.quantity);
+                        tmp.name, tmp.quantity);
                 }
             }
         }
@@ -163,10 +181,44 @@ public class Register {
     }
 
     //compile inventory
-    public static void buildInventory() {
+    public void buildInventory() {
+        inventory = new ArrayList<>();
+
         inventory.add(Item.grapes);
         inventory.add(Item.bananas);
         inventory.add(Item.bread);
         inventory.add(Item.rice);
+
+        printInv(inventory);
+    }
+
+    public Item getItem(String itemName) {
+        for (Item item : inventory) {
+            if (itemName.equals(item.name))
+                return item;
+        }
+        System.out.println("Error: Item not found in inventory.");
+        return null;
+    }
+
+
+    public void printItemList() {
+        Item item;
+        System.out.println("Purchased items:");
+        for (int i = 0; i < itemList.size(); i++) {
+            item = itemList.get(i);
+            System.out.println(item.getName() + " : " + item.getQuant());
+        }
+    }
+
+    public void printInv(ArrayList<Item> inventory) {
+        Item item;
+
+        System.out.println("Building inventory...");
+        for (int i = 0; i < inventory.size(); i++) {
+            item = inventory.get(i);
+            System.out.println(item.getName());
+        }
+        System.out.println("Inventory size: " + inventory.size());
     }
 }

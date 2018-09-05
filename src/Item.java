@@ -1,9 +1,9 @@
 public class Item {
 
-    public static String name;
+    public String name;
     public double price;
-    public double sale = 0;
-    public int quantity = 0;
+    public double sale;
+    public int quantity;
 
     //Item constructor, not on sale
     public Item(String n, double p) {
@@ -19,7 +19,7 @@ public class Item {
         this.sale = s;
         this.quantity = 0;
     }
-    public static String getName() {
+    public String getName() {
         return name;
     }
     public double getPrice() {
@@ -55,14 +55,5 @@ public class Item {
     static Item orange_juice = new Item("orange juice", 3.40, .09);
     static Item lotion = new Item("lotion", 2.89);
     static Item soup = new Item("soup", .79);
-
-    public static Item getItem(String str) {
-        for (Item tmp : Register.inventory) {
-            if (str.equals(tmp.name))
-                return tmp;
-        }
-        System.out.println("Error: Item not found in inventory.");
-        return null;
-    }
 
 }

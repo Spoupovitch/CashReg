@@ -1,7 +1,10 @@
 //import java.util.Scanner;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -14,11 +17,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.text.Text;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
@@ -27,18 +32,19 @@ public class CashReg extends Application {
     private Label welcome;
     private Button startBtn, backBtn;
 
-    private ListView<Item> itemsToBuy;
+    private ObservableList<Item> itemsObsList;
+    private ListView<Item> itemsView;
+    private Text subtotalView;
 
     private Scene home, checkout;
 
     private Stage mainStage;
 
-    public Register register;
+    private Register register;
 
-    private int qty;
+    private int qty = 1;
 
     public static void main(String[] args) {
-        Register.buildInventory();
         launch(args);
     }
 
@@ -73,6 +79,13 @@ public class CashReg extends Application {
         homeLayout.getChildren().addAll(welcome, startBtn);
         homeLayout.setAlignment(Pos.CENTER);
 
+        /*
+        set home scene
+        */
+        home = new Scene(homeLayout, 300, 250);
+        mainStage.setScene(home);
+        mainStage.show();
+
 
         /*
         main screen elements
@@ -80,35 +93,57 @@ public class CashReg extends Application {
         //inventory elements
         Button grapesBtn = new Button("Grapes");
         grapesBtn.setOnAction(e -> {
-            register.sell(Register.inventory.get(0), qty);
-            itemsToBuy.getItems().add(Register.inventory.get(0));
+            register.sell("grapes", qty);
+            itemsObsList.setAll(register.itemList);
+            subtotalView.setText(String.format("%4.2f", register.subtotal));
+        });
+
+        Button bananasBtn = new Button("Nanas");
+        bananasBtn.setOnAction(e -> {
+            register.sell("bananas", qty);
+            itemsObsList.setAll(register.itemList);
+            subtotalView.setText(String.format("%4.2f", register.subtotal));
+        });
+
+        Button breadBtn = new Button("Bread");
+        breadBtn.setOnAction(e -> {
+            register.sell("bread", qty);
+            itemsObsList.setAll(register.itemList);
+            subtotalView.setText(String.format("%4.2f", register.subtotal));
         });
 
 
         //transaction elements
-        /*
-        itemsToBuy = new ListView<>();
-        itemsToBuy.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        itemsObsList = FXCollections.observableArrayList(register.itemList);
+        itemsObsList.addListener(new ListChangeListener<Item>() {
+            @Override
+            public void onChanged(Change<? extends Item> c) {
+            }
+        });
 
-        */
-        ObservableList<Item> listedItems = FXCollections.observableArrayList(register.itemList);
-        itemsToBuy = new ListView<>(listedItems);
-        itemsToBuy.setCellFactory(new Callback<ListView<Item>, ListCell<Item>>() {
+        itemsView = new ListView<>(itemsObsList);
+        itemsView.setEditable(true);
+        itemsView.setCellFactory(new Callback<ListView<Item>, ListCell<Item>>() {
             @Override
             public ListCell<Item> call(ListView<Item> list) {
                 return new ItemFormatCell();
             }
         });
-        itemsToBuy.setEditable(true);
+
+        subtotalView = new Text();
+        subtotalView.setText(String.format("%4.2f", register.subtotal));
+        subtotalView.setTextAlignment(TextAlignment.RIGHT);
+        subtotalView.getStyleClass().add("subtotal-text");
 
         //command bar elements
         backBtn = new Button("<");
         backBtn.setOnAction(e -> mainStage.setScene(home));
 
-        ChoiceBox<Integer> quantitySel = new ChoiceBox<>();
-        quantitySel.getItems().addAll(1, 2, 3, 4, 5);
-        quantitySel.setValue(1);
-        quantitySel.getSelectionModel().selectedItemProperty().addListener((v, oldVal, newVal) -> qty = newVal);
+        ChoiceBox<Integer> sellQty = new ChoiceBox<>();
+        sellQty.getItems().addAll(1, 2, 3, 4, 5);
+        sellQty.setValue(1);
+        sellQty.getSelectionModel().selectedItemProperty().addListener(
+            (v, oldVal, newVal) -> qty = newVal);
 
 
         /*
@@ -117,16 +152,16 @@ public class CashReg extends Application {
         //inventory layout shows all items which may be sold
         TilePane inventoryLayout = new TilePane(2.5, 2.5);
         inventoryLayout.setPrefColumns(3);
-        inventoryLayout.getChildren().addAll(grapesBtn);
+        inventoryLayout.getChildren().addAll(grapesBtn, bananasBtn, breadBtn);
 
         //transaction layout shows items for purchase
         VBox transactionLayout = new VBox(15);
         transactionLayout.setAlignment(Pos.CENTER_LEFT);
-        transactionLayout.getChildren().addAll(itemsToBuy);
+        transactionLayout.getChildren().addAll(itemsView, subtotalView);
 
         //command bar layout
         HBox commandBarLayout = new HBox(20);
-        commandBarLayout.getChildren().addAll(backBtn, quantitySel);
+        commandBarLayout.getChildren().addAll(backBtn, sellQty);
 
         //foundational layout for all other layouts
         BorderPane mainLayout = new BorderPane();
@@ -136,14 +171,9 @@ public class CashReg extends Application {
 
         mainLayout.setPadding(new Insets(10));
 
-
-        //set home scene
-        home = new Scene(homeLayout, 300, 250);
-        mainStage.setScene(home);
-        mainStage.show();
-
-
-        //set main scene
+        /*
+        set main scene
+        */
         checkout = new Scene(mainLayout, 450, 650);
         checkout.getStylesheets().add("RegisterStyle.css");
     }
@@ -155,21 +185,15 @@ public class CashReg extends Application {
             mainStage.close();
     }
 
-    private void updateTransaction() {
-        for (Item item : itemsToBuy.getItems()) {
-
-        }
-    }
-
     public class ItemFormatCell extends ListCell<Item> {
         public ItemFormatCell() {}
-        @Override protected void updateItem(Item item, boolean empty) {
+        @Override
+        protected void updateItem(Item item, boolean empty) {
             super.updateItem(item, empty);
 
             if (item != null) {
                 setText(item.name + " : " + item.quantity);
-                double value = item.sale;
-                setTextFill(value == 0 ? Color.BLACK : Color.GREEN);
+                setTextFill(item.sale == 0 ? Color.BLACK : Color.GREEN);
             }
         }
     }
