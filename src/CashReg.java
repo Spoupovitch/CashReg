@@ -122,6 +122,7 @@ public class CashReg extends Application {
         });
 
         itemsView = new ListView<>(itemsObsList);
+        itemsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         itemsView.setEditable(true);
         itemsView.setCellFactory(new Callback<ListView<Item>, ListCell<Item>>() {
             @Override
@@ -145,6 +146,14 @@ public class CashReg extends Application {
         sellQty.getSelectionModel().selectedItemProperty().addListener(
             (v, oldVal, newVal) -> qty = newVal);
 
+        Button voidItemBtn = new Button("Void");
+        voidItemBtn.setOnAction(e -> {
+            for (Item selected : itemsView.getSelectionModel().getSelectedItems()) {
+                register.voidItem(selected, qty);
+            }
+            itemsObsList.setAll(register.itemList);
+            subtotalView.setText(String.format("%4.2f", register.subtotal));
+        });
 
         /*
         main screen layouts
@@ -161,7 +170,7 @@ public class CashReg extends Application {
 
         //command bar layout
         HBox commandBarLayout = new HBox(20);
-        commandBarLayout.getChildren().addAll(backBtn, sellQty);
+        commandBarLayout.getChildren().addAll(backBtn, sellQty, voidItemBtn);
 
         //foundational layout for all other layouts
         BorderPane mainLayout = new BorderPane();

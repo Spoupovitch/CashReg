@@ -114,7 +114,19 @@ public class Register {
 
     //subtract item value from receipt based on input quantity
     public void voidItem(Item item, int qty) {
-        subtotal -= item.price * (1 - item.sale) * qty;
+
+        if (item == null) {
+            return;
+        }
+        //check whether item exists in item list
+        else {
+            int index = itemList.indexOf(item);
+            //subtract qty from item's quantity
+            itemList.get(index).quantity -= qty;
+            //modify subtotal
+            subtotal -= item.price * (1 - item.sale) * qty;
+            printItemList();
+        }
     }
 
     //2. ring up all items
