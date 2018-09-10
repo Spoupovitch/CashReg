@@ -121,11 +121,19 @@ public class Register {
         //check whether item exists in item list
         else {
             int index = itemList.indexOf(item);
-            //subtract qty from item's quantity
-            itemList.get(index).quantity -= qty;
-            //modify subtotal
-            subtotal -= item.price * (1 - item.sale) * qty;
-            printItemList();
+            //remove item from item list
+            if (itemList.get(index).quantity <= qty) {
+                subtotal -= item.price * (1 - item.sale) * itemList.get(index).quantity;
+                itemList.get(index).quantity = 0;
+                printItemList();
+            }
+            //subtract from item quantity
+            else {
+                itemList.get(index).quantity -= qty;
+                //modify subtotal
+                subtotal -= item.price * (1 - item.sale) * qty;
+                printItemList();
+            }
         }
     }
 

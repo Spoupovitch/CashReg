@@ -155,6 +155,7 @@ public class CashReg extends Application {
             subtotalView.setText(String.format("%4.2f", register.subtotal));
         });
 
+
         /*
         main screen layouts
         */
