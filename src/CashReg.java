@@ -2,17 +2,14 @@
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -27,14 +24,15 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.awt.*;
+
 
 public class CashReg extends Application {
-    private Label welcome;
-    private Button startBtn, backBtn;
 
     private ObservableList<Item> itemsObsList;
     private ListView<Item> itemsView;
-    private Text subtotalView;
+    private Text subtotalText;
+    private Text totalText;
 
     private Scene home, checkout;
 
@@ -54,10 +52,11 @@ public class CashReg extends Application {
 
         mainStage = primaryStage;
         mainStage.setTitle("GFY Market");
+        mainStage.resizableProperty().setValue(false);
 
         /*
         //close method
-        primaryStage.setOnCloseRequest(e -> {
+        mainStage.setOnCloseRequest(e -> {
             e.consume();
             confirmClose();
         });
@@ -67,9 +66,9 @@ public class CashReg extends Application {
         /*
         home screen elements
         */
-        welcome = new Label("Click below to begin checkout");
+        Label welcome = new Label("Click below to begin checkout");
 
-        startBtn = new Button("Checkout");
+        Button startBtn = new Button("Checkout");
         startBtn.setOnAction(e -> mainStage.setScene(checkout));
 
         /*
@@ -94,22 +93,31 @@ public class CashReg extends Application {
         Button grapesBtn = new Button("Grapes");
         grapesBtn.setOnAction(e -> {
             register.sell("grapes", qty);
-            itemsObsList.setAll(register.itemList);
-            subtotalView.setText(String.format("%4.2f", register.subtotal));
+            miscUpdate();
         });
 
         Button bananasBtn = new Button("Nanas");
         bananasBtn.setOnAction(e -> {
             register.sell("bananas", qty);
-            itemsObsList.setAll(register.itemList);
-            subtotalView.setText(String.format("%4.2f", register.subtotal));
+            miscUpdate();
         });
 
         Button breadBtn = new Button("Bread");
         breadBtn.setOnAction(e -> {
             register.sell("bread", qty);
-            itemsObsList.setAll(register.itemList);
-            subtotalView.setText(String.format("%4.2f", register.subtotal));
+            miscUpdate();
+        });
+
+        Button riceBtn = new Button("Rice");
+        riceBtn.setOnAction(e -> {
+            register.sell("rice", qty);
+            miscUpdate();
+        });
+
+        Button alaskanCodBtn = new Button("Alaskan Cod");
+        alaskanCodBtn.setOnAction(e -> {
+            register.sell("alaskan cod", qty);
+            miscUpdate();
         });
 
 
@@ -123,6 +131,7 @@ public class CashReg extends Application {
 
         itemsView = new ListView<>(itemsObsList);
         itemsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        itemsView.setMaxWidth(150);
         itemsView.setEditable(true);
         itemsView.setCellFactory(new Callback<ListView<Item>, ListCell<Item>>() {
             @Override
@@ -131,28 +140,38 @@ public class CashReg extends Application {
             }
         });
 
-        subtotalView = new Text();
-        subtotalView.setText(String.format("%4.2f", register.subtotal));
-        subtotalView.setTextAlignment(TextAlignment.RIGHT);
-        subtotalView.getStyleClass().add("subtotal-text");
+        subtotalText = new Text();
+        subtotalText.setText("Subtotal:\t\t"
+            + String.format("%4.2f", register.subtotal));
+        subtotalText.setTextAlignment(TextAlignment.RIGHT);
+        subtotalText.getStyleClass().add("total-text");
+
+        totalText = new Text();
+        totalText.setText("Total:\t\t"
+            + String.format("%4.2f", register.subtotal * register.TAX));
+        totalText.setTextAlignment(TextAlignment.RIGHT);
+        totalText.getStyleClass().add("total-text");
+
 
         //command bar elements
-        backBtn = new Button("<");
+        Button backBtn = new Button("<");
         backBtn.setOnAction(e -> mainStage.setScene(home));
 
-        ChoiceBox<Integer> sellQty = new ChoiceBox<>();
+        ComboBox<Integer> sellQty = new ComboBox<>();
         sellQty.getItems().addAll(1, 2, 3, 4, 5);
-        sellQty.setValue(1);
-        sellQty.getSelectionModel().selectedItemProperty().addListener(
-            (v, oldVal, newVal) -> qty = newVal);
+        sellQty.setPromptText("Qty");
+        sellQty.setEditable(true);
+        //sellQty.getSelectionModel().selectedItemProperty().addListener(
+        //    (v, oldVal, newVal) -> qty = newVal);
+        sellQty.setOnAction(e -> qty = sellQty.getValue());
+        sellQty.setMaxWidth(70);
 
         Button voidItemBtn = new Button("Void");
         voidItemBtn.setOnAction(e -> {
             for (Item selected : itemsView.getSelectionModel().getSelectedItems()) {
                 register.voidItem(selected, qty);
             }
-            itemsObsList.setAll(register.itemList);
-            subtotalView.setText(String.format("%4.2f", register.subtotal));
+            miscUpdate();
         });
 
 
@@ -160,14 +179,15 @@ public class CashReg extends Application {
         main screen layouts
         */
         //inventory layout shows all items which may be sold
-        TilePane inventoryLayout = new TilePane(2.5, 2.5);
+        TilePane inventoryLayout = new TilePane(.5, 2.5);
         inventoryLayout.setPrefColumns(3);
-        inventoryLayout.getChildren().addAll(grapesBtn, bananasBtn, breadBtn);
+        inventoryLayout.getChildren().addAll(grapesBtn, bananasBtn, breadBtn, riceBtn,
+            alaskanCodBtn);
 
         //transaction layout shows items for purchase
         VBox transactionLayout = new VBox(15);
-        transactionLayout.setAlignment(Pos.CENTER_LEFT);
-        transactionLayout.getChildren().addAll(itemsView, subtotalView);
+        transactionLayout.setAlignment(Pos.CENTER);
+        transactionLayout.getChildren().addAll(itemsView, subtotalText, totalText);
 
         //command bar layout
         HBox commandBarLayout = new HBox(20);
@@ -184,7 +204,7 @@ public class CashReg extends Application {
         /*
         set main scene
         */
-        checkout = new Scene(mainLayout, 450, 650);
+        checkout = new Scene(mainLayout, 450, 500);
         checkout.getStylesheets().add("RegisterStyle.css");
     }
 
@@ -193,6 +213,14 @@ public class CashReg extends Application {
         boolean answer = ConfirmPrompt.display("Confirm close", "Are you sure you would like to exit?");
         if (answer)
             mainStage.close();
+    }
+
+    private void miscUpdate() {
+        itemsObsList.setAll(register.itemList);
+        subtotalText.setText("Subtotal:\t\t"
+                + String.format("%4.2f", register.subtotal));
+        totalText.setText("Total:\t\t"
+                + String.format("%4.2f", register.subtotal * register.TAX));
     }
 
     public class ItemFormatCell extends ListCell<Item> {

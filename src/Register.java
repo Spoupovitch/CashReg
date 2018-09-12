@@ -3,7 +3,7 @@ import java.util.*;
 
 public class Register {
 
-    private final double tax = 0.07;
+    public final double TAX = 1.07;
     public double subtotal;
 
     Scanner scan = new Scanner(System.in);
@@ -16,7 +16,7 @@ public class Register {
         buildInventory();
     }
 
-    //1. enter loop to scan in items
+    //DEPRECATED enter loop to scan in items
     public void scanItems() {
         String str;
         int qty;
@@ -118,7 +118,6 @@ public class Register {
         if (item == null) {
             return;
         }
-        //check whether item exists in item list
         else {
             int index = itemList.indexOf(item);
             //remove item from item list
@@ -137,7 +136,7 @@ public class Register {
         }
     }
 
-    //2. ring up all items
+    //DEPRECATED ring up all items
     public void checkout() {
         System.out.println("Would you like a receipt? Yes or No");
         String str = scan.next();
@@ -149,10 +148,9 @@ public class Register {
             return;
         }
         System.out.println("Thank you, have a great day!");
-
     }
 
-    //3. void last transaction
+    //DEPRECATED void last transaction
     public void voidLastTrans() {
         if (itemList.isEmpty()) {
             System.out.println("List is currently empty.");
@@ -166,7 +164,7 @@ public class Register {
         }
     }
 
-    //4. void items from list
+    //DEPRECATED void items from list
     public void voidItems(String str, int qty) {
         for (Item tmp : itemList) {
             //found requested item in list
@@ -190,14 +188,14 @@ public class Register {
         }
     }
 
-    //5. print receipt to screen
+    //DEPRECATED print receipt to screen
     public void printReceipt() {
         System.out.println("Printing receipt...\n");
         for (Item tmp : itemList) {
         }
         System.out.printf("____________________"
                 + "\nSubtotal:\t$%.2f\nTax:\t$%.2f\nTotal:\t$%.2f\n\n",
-                subtotal, subtotal*tax, subtotal + tax*subtotal);
+                subtotal, subtotal*TAX, subtotal + TAX*subtotal);
     }
 
     //compile inventory
@@ -208,6 +206,7 @@ public class Register {
         inventory.add(Item.bananas);
         inventory.add(Item.bread);
         inventory.add(Item.rice);
+        inventory.add(Item.alaskan_cod);
 
         printInv(inventory);
     }

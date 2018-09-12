@@ -55,5 +55,4 @@ public class Item {
     static Item orange_juice = new Item("orange juice", 3.40, .09);
     static Item lotion = new Item("lotion", 2.89);
     static Item soup = new Item("soup", .79);
-
 }
