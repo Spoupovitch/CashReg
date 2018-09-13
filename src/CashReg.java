@@ -1,5 +1,3 @@
-//import java.util.Scanner;
-
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -9,7 +7,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -23,8 +21,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-
-import java.awt.*;
 
 
 public class CashReg extends Application {
@@ -82,6 +78,7 @@ public class CashReg extends Application {
         set home scene
         */
         home = new Scene(homeLayout, 300, 250);
+        //home.getStylesheets().add("RegisterStyle.css");
         mainStage.setScene(home);
         mainStage.show();
 
@@ -91,32 +88,107 @@ public class CashReg extends Application {
         */
         //inventory elements
         Button grapesBtn = new Button("Grapes");
+        grapesBtn.setPrefWidth(90);
         grapesBtn.setOnAction(e -> {
             register.sell("grapes", qty);
             miscUpdate();
         });
 
         Button bananasBtn = new Button("Nanas");
+        bananasBtn.setPrefWidth(90);
         bananasBtn.setOnAction(e -> {
             register.sell("bananas", qty);
             miscUpdate();
         });
 
         Button breadBtn = new Button("Bread");
+        breadBtn.setPrefWidth(90);
         breadBtn.setOnAction(e -> {
             register.sell("bread", qty);
             miscUpdate();
         });
 
         Button riceBtn = new Button("Rice");
+        riceBtn.setPrefWidth(90);
         riceBtn.setOnAction(e -> {
             register.sell("rice", qty);
             miscUpdate();
         });
 
         Button alaskanCodBtn = new Button("Alaskan Cod");
+        alaskanCodBtn.setPrefWidth(90);
         alaskanCodBtn.setOnAction(e -> {
             register.sell("alaskan cod", qty);
+            miscUpdate();
+        });
+
+        Button eggsBtn = new Button("Eggs");
+        eggsBtn.setPrefWidth(90);
+        eggsBtn.setOnAction(e -> {
+            register.sell("eggs", qty);
+            miscUpdate();
+        });
+
+        Button lunchMeatBtn = new Button("Lunch Meat");
+        lunchMeatBtn.setPrefWidth(90);
+        lunchMeatBtn.setOnAction(e -> {
+            register.sell("lunch meat", qty);
+            miscUpdate();
+        });
+
+        Button groundBeefBtn = new Button("Ground Beef");
+        groundBeefBtn.setPrefWidth(90);
+        groundBeefBtn.setOnAction(e -> {
+            register.sell("ground beef", qty);
+            miscUpdate();
+        });
+
+        Button milkBtn = new Button("Milk");
+        milkBtn.setPrefWidth(90);
+        milkBtn.setOnAction(e -> {
+            register.sell("milk", qty);
+            miscUpdate();
+        });
+
+        Button iceCreamBtn = new Button("Ice Cream");
+        iceCreamBtn.setPrefWidth(90);
+        iceCreamBtn.setOnAction(e -> {
+            register.sell("ice cream", qty);
+            miscUpdate();
+        });
+
+        Button cheeseBtn = new Button("Cheese");
+        cheeseBtn.setPrefWidth(90);
+        cheeseBtn.setOnAction(e -> {
+            register.sell("cheese", qty);
+            miscUpdate();
+        });
+
+        Button peanutButterBtn = new Button("Peanut Butter");
+        peanutButterBtn.setPrefWidth(90);
+        peanutButterBtn.setOnAction(e -> {
+            register.sell("peanut butter", qty);
+            miscUpdate();
+        });
+
+        Button orangeJuiceBtn = new Button("Orange Juice");
+        orangeJuiceBtn.setPrefWidth(90);
+        orangeJuiceBtn.setOnAction(e -> {
+            register.sell("orange juice", qty);
+            miscUpdate();
+        });
+
+        Button lotionBtn = new Button("Lotion");
+        lotionBtn.setPrefWidth(90);
+        lotionBtn.setOnAction(e -> {
+            register.sell("lotion", qty);
+            miscUpdate();
+        });
+
+        Button soupBtn = new Button("Soup");
+        soupBtn.setPrefWidth(90);
+        soupBtn.setOnAction(e -> {
+            register.sell("soup", qty);
             miscUpdate();
         });
 
@@ -141,14 +213,14 @@ public class CashReg extends Application {
         });
 
         subtotalText = new Text();
-        subtotalText.setText("Subtotal:\t\t"
-            + String.format("%4.2f", register.subtotal));
+        subtotalText.setText("Subtotal:\t\t" + String.format(
+            "%4.2f", register.getSubtotal()));
         subtotalText.setTextAlignment(TextAlignment.RIGHT);
         subtotalText.getStyleClass().add("total-text");
 
         totalText = new Text();
-        totalText.setText("Total:\t\t"
-            + String.format("%4.2f", register.subtotal * register.TAX));
+        totalText.setText("Total:\t\t" + String.format(
+            "%4.2f", register.getTotal()));
         totalText.setTextAlignment(TextAlignment.RIGHT);
         totalText.getStyleClass().add("total-text");
 
@@ -157,13 +229,11 @@ public class CashReg extends Application {
         Button backBtn = new Button("<");
         backBtn.setOnAction(e -> mainStage.setScene(home));
 
-        ComboBox<Integer> sellQty = new ComboBox<>();
+        ChoiceBox<Integer> sellQty = new ChoiceBox<>();
         sellQty.getItems().addAll(1, 2, 3, 4, 5);
-        sellQty.setPromptText("Qty");
-        sellQty.setEditable(true);
-        //sellQty.getSelectionModel().selectedItemProperty().addListener(
-        //    (v, oldVal, newVal) -> qty = newVal);
-        sellQty.setOnAction(e -> qty = sellQty.getValue());
+        sellQty.setValue(1);
+        sellQty.getSelectionModel().selectedItemProperty().addListener(
+            (v, oldVal, newVal) -> qty = newVal);
         sellQty.setMaxWidth(70);
 
         Button voidItemBtn = new Button("Void");
@@ -179,10 +249,13 @@ public class CashReg extends Application {
         main screen layouts
         */
         //inventory layout shows all items which may be sold
-        TilePane inventoryLayout = new TilePane(.5, 2.5);
+        TilePane inventoryLayout = new TilePane(5, 15);
+        inventoryLayout.setAlignment(Pos.CENTER);
         inventoryLayout.setPrefColumns(3);
+        inventoryLayout.setPrefTileWidth(90);
         inventoryLayout.getChildren().addAll(grapesBtn, bananasBtn, breadBtn, riceBtn,
-            alaskanCodBtn);
+            alaskanCodBtn, eggsBtn, lunchMeatBtn, groundBeefBtn, milkBtn, iceCreamBtn,
+            cheeseBtn, peanutButterBtn, orangeJuiceBtn, lotionBtn, soupBtn);
 
         //transaction layout shows items for purchase
         VBox transactionLayout = new VBox(15);
@@ -198,13 +271,12 @@ public class CashReg extends Application {
         mainLayout.setCenter(inventoryLayout);
         mainLayout.setRight(transactionLayout);
         mainLayout.setBottom(commandBarLayout);
-
         mainLayout.setPadding(new Insets(10));
 
         /*
         set main scene
         */
-        checkout = new Scene(mainLayout, 450, 500);
+        checkout = new Scene(mainLayout, 460, 400);
         checkout.getStylesheets().add("RegisterStyle.css");
     }
 
@@ -215,12 +287,13 @@ public class CashReg extends Application {
             mainStage.close();
     }
 
+    //update register variables upon button press
     private void miscUpdate() {
         itemsObsList.setAll(register.itemList);
         subtotalText.setText("Subtotal:\t\t"
-                + String.format("%4.2f", register.subtotal));
+                + String.format("%4.2f", register.getSubtotal()));
         totalText.setText("Total:\t\t"
-                + String.format("%4.2f", register.subtotal * register.TAX));
+                + String.format("%4.2f", register.getTotal()));
     }
 
     public class ItemFormatCell extends ListCell<Item> {
@@ -230,8 +303,9 @@ public class CashReg extends Application {
             super.updateItem(item, empty);
 
             if (item != null) {
-                setText(item.name + " : " + item.quantity);
-                setTextFill(item.sale == 0 ? Color.BLACK : Color.GREEN);
+                setText(item.getQuant() + " : " + item.getName() + "  . . .  " + String.format(
+                    "%4.2f", item.getQuant() * item.getPrice() * (1 - item.getSale())));
+                setTextFill((item.getSale() == 0) ? Color.BLACK : Color.GREEN);
             }
         }
     }

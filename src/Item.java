@@ -1,37 +1,43 @@
 public class Item {
 
-    public String name;
-    public double price;
-    public double sale;
-    public int quantity;
+    private String name;
+    private double price;
+    private double sale;
+    private int quantity;
 
-    //Item constructor, not on sale
-    public Item(String n, double p) {
+    //Item constructor, item not on sale
+    private Item(String n, double p) {
         this.name = n;
         this.price = p;
         this.sale = 0;
         this.quantity = 0;
     }
+
     //Item constructor, third param is sale percentage
-    public Item(String n, double p, double s) {
+    private Item(String n, double p, double s) {
         this.name = n;
         this.price = p;
         this.sale = s;
         this.quantity = 0;
     }
-    public String getName() {
-        return name;
+
+    String getName() {
+        return this.name;
     }
-    public double getPrice() {
-        return price;
+
+    double getPrice() {
+        return this.price;
     }
-    public double getSale() {
-        return sale;
+
+    double getSale() {
+        return this.sale;
     }
-    public int getQuant() {
-        return quantity;
+
+    int getQuant() {
+        return this.quantity;
     }
-    public void setQuant(int qty) {
+
+    void setQuant(int qty) {
         this.quantity = qty;
     }
 
@@ -45,7 +51,8 @@ public class Item {
     //meat, fish, poultry
     static Item alaskan_cod = new Item("alaskan cod", 9.34, .2);
     static Item eggs = new Item("eggs", 3.33);
-    static Item lunch_meat = new Item("lunch meat", 4.18);
+    static Item lunch_meat = new Item("lunch meat", 3.80);
+    static Item ground_beef = new Item("ground beef", 5.18);
     //dairy
     static Item milk = new Item("milk", 4.75, .2);
     static Item ice_cream = new Item("ice cream", 5.44, .15);

@@ -1,93 +1,30 @@
-import java.util.*;
+import java.util.ArrayList;
 
 
 public class Register {
 
-    public final double TAX = 1.07;
-    public double subtotal;
+    private final double TAX = .07;
+    private double subtotal;
 
-    Scanner scan = new Scanner(System.in);
-    public ArrayList<Item> itemList;
-    public ArrayList<Item> inventory;
+    ArrayList<Item> itemList;
+    private ArrayList<Item> inventory;
 
-    public Register() {
+    Register() {
         subtotal = 0.0;
         itemList = new ArrayList<>();
         buildInventory();
     }
 
-    //DEPRECATED enter loop to scan in items
-    public void scanItems() {
-        String str;
-        int qty;
-        boolean loop = true, found = false;
+    double getSubtotal() {
+        return subtotal;
+    }
 
-        while (loop) {
-            System.out.println("Scanning items...");
-            str = scan.next();
-            if (str.equals("/v")) {
-                voidLastTrans();
-            }
-            else if (str.equals("/t")) {
-                loop = false;
-            }
-            else {
-                //check for valid input
-                if (getItem(str) == null)
-                {
-                    continue;
-                }
-                for (Item tmp : itemList) {
-                        found = false;
-                        //add to qty of item present in list
-                        if (str.equals(tmp.name)) {
-                            found = true;
-                            System.out.print("Quantity to sell: ");
-                            try {
-                                qty = scan.nextInt();
-                                while(qty < 0)
-                                {
-                                    System.out.println("Enter a valid positive number you degenerate:");
-                                    qty = scan.nextInt();
-                                }
-                                tmp.quantity += qty;
-                            }
-                            //add 1 to quantity if exception thrown
-                            catch (InputMismatchException ex) {
-                                tmp.quantity += qty = 1;
-                            }
-                            //add item's value to subtotal
-                            sell(str, qty);
-                            break;
-                        }
-                    }
-                //add new item to list
-                if (!found) {
-                    itemList.add(getItem(str));
-                    int last = itemList.size() - 1;
-                    System.out.print("Quantity to sell: ");
-                    try {
-                        qty = scan.nextInt();
-                        while(qty < 0)
-                        {
-                            System.out.println("Enter a valid positive number you degenerate: ");
-                            qty = scan.nextInt();
-                        }
-                        itemList.get(last).quantity += qty;
-                    }
-                    //add 1 to quantity if exception thrown
-                    catch (InputMismatchException ex) {
-                        itemList.get(last).quantity += qty = 1;
-                    }
-                    //add item's value to subtotal
-                    sell(str, qty);
-                }
-            }
-        }
+    double getTotal() {
+        return this.subtotal * (1 + this.TAX);
     }
 
     //add item value to receipt based on input quantity
-    public void sell(String itemName, int qty) {
+    void sell(String itemName, int qty) {
         Item item = getItem(itemName);
 
         if (item == null) {
@@ -97,23 +34,21 @@ public class Register {
         else if (itemList.contains(item)) {
             int index = itemList.indexOf(item);
             //add qty to item's quantity
-            itemList.get(index).quantity += qty;
+            itemList.get(index).setQuant(itemList.get(index).getQuant() + qty);
             //modify subtotal
-            subtotal += item.price * (1 - item.sale) * qty;
-            printItemList();
+            subtotal += item.getPrice() * (1 - item.getSale()) * qty;
         }
         else {
             //add qty to item's quantity
-            item.quantity += qty;
+            item.setQuant(qty);
             itemList.add(item);
             //modify subtotal
-            subtotal += item.price * (1 - item.sale) * qty;
-            printItemList();
+            subtotal += item.getPrice() * (1 - item.getSale()) * qty;
         }
     }
 
     //subtract item value from receipt based on input quantity
-    public void voidItem(Item item, int qty) {
+    void voidItem(Item item, int qty) {
 
         if (item == null) {
             return;
@@ -121,85 +56,21 @@ public class Register {
         else {
             int index = itemList.indexOf(item);
             //remove item from item list
-            if (itemList.get(index).quantity <= qty) {
-                subtotal -= item.price * (1 - item.sale) * itemList.get(index).quantity;
-                itemList.get(index).quantity = 0;
-                printItemList();
+            if (itemList.get(index).getQuant() <= qty) {
+                subtotal -= item.getPrice() * (1 - item.getSale()) * itemList.get(index).getQuant();
+                itemList.get(index).setQuant(0);
             }
             //subtract from item quantity
             else {
-                itemList.get(index).quantity -= qty;
+                itemList.get(index).setQuant(itemList.get(index).getQuant() - qty);
                 //modify subtotal
-                subtotal -= item.price * (1 - item.sale) * qty;
-                printItemList();
+                subtotal -= item.getPrice() * (1 - item.getSale()) * qty;
             }
         }
-    }
-
-    //DEPRECATED ring up all items
-    public void checkout() {
-        System.out.println("Would you like a receipt? Yes or No");
-        String str = scan.next();
-
-        if(str.equals("Yes") || str.equals("yes") || str.equals("Y") || str.equals("y"))
-        {
-            printReceipt();
-            System.out.println("Thanks for shopping with us, have a great day!");
-            return;
-        }
-        System.out.println("Thank you, have a great day!");
-    }
-
-    //DEPRECATED void last transaction
-    public void voidLastTrans() {
-        if (itemList.isEmpty()) {
-            System.out.println("List is currently empty.");
-        }
-        else {
-            int tail = itemList.size() - 1;
-            //reduce subtotal
-            voidItem(itemList.get(tail), itemList.get(tail).quantity);
-            itemList.remove(tail);
-            System.out.println("Last sale has been voided.");
-        }
-    }
-
-    //DEPRECATED void items from list
-    public void voidItems(String str, int qty) {
-        for (Item tmp : itemList) {
-            //found requested item in list
-            if (tmp.name.equals(str)) {
-                //remove item from list entirely
-                if (qty >= tmp.quantity) {
-                    //adjust subtotal
-                    voidItem(tmp, tmp.quantity);
-                    itemList.remove(tmp);
-                    System.out.println(str + " removed from list.");
-                }
-                //reduce portion of given item's quantity
-                else {
-                    tmp.quantity -= qty;
-                    //subtract appropriate amt from subtotal
-                    voidItem(tmp, qty);
-                    System.out.printf("%s quantity reduced to %d.\n",
-                        tmp.name, tmp.quantity);
-                }
-            }
-        }
-    }
-
-    //DEPRECATED print receipt to screen
-    public void printReceipt() {
-        System.out.println("Printing receipt...\n");
-        for (Item tmp : itemList) {
-        }
-        System.out.printf("____________________"
-                + "\nSubtotal:\t$%.2f\nTax:\t$%.2f\nTotal:\t$%.2f\n\n",
-                subtotal, subtotal*TAX, subtotal + TAX*subtotal);
     }
 
     //compile inventory
-    public void buildInventory() {
+    private void buildInventory() {
         inventory = new ArrayList<>();
 
         inventory.add(Item.grapes);
@@ -207,13 +78,23 @@ public class Register {
         inventory.add(Item.bread);
         inventory.add(Item.rice);
         inventory.add(Item.alaskan_cod);
+        inventory.add(Item.eggs);
+        inventory.add(Item.lunch_meat);
+        inventory.add(Item.ground_beef);
+        inventory.add(Item.milk);
+        inventory.add(Item.ice_cream);
+        inventory.add(Item.cheese);
+        inventory.add(Item.peanut_butter);
+        inventory.add(Item.orange_juice);
+        inventory.add(Item.lotion);
+        inventory.add(Item.soup);
 
-        printInv(inventory);
+        printInventory();
     }
 
-    public Item getItem(String itemName) {
+    private Item getItem(String itemName) {
         for (Item item : inventory) {
-            if (itemName.equals(item.name))
+            if (itemName.equals(item.getName()))
                 return item;
         }
         System.out.println("Error: Item not found in inventory.");
@@ -221,7 +102,8 @@ public class Register {
     }
 
 
-    public void printItemList() {
+    //debugging methods
+    private void printItemList() {
         Item item;
         System.out.println("Purchased items:");
         for (int i = 0; i < itemList.size(); i++) {
@@ -230,7 +112,7 @@ public class Register {
         }
     }
 
-    public void printInv(ArrayList<Item> inventory) {
+    private void printInventory() {
         Item item;
 
         System.out.println("Building inventory...");
