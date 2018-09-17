@@ -5,12 +5,14 @@ public class Register {
 
     private final double TAX = .07;
     private double subtotal;
+    private double savings;
 
     ArrayList<Item> itemList;
     private ArrayList<Item> inventory;
 
     Register() {
         subtotal = 0.0;
+        savings = 0;
         itemList = new ArrayList<>();
         buildInventory();
     }
@@ -21,6 +23,10 @@ public class Register {
 
     double getTotal() {
         return this.subtotal * (1 + this.TAX);
+    }
+
+    double getSavings() {
+        return this.savings;
     }
 
     //add item value to receipt based on input quantity
@@ -45,6 +51,15 @@ public class Register {
             //modify subtotal
             subtotal += item.getPrice() * (1 - item.getSale()) * qty;
         }
+
+        if (item.getSale() > 0) {
+            savingsAmt(item);
+        }
+    }
+
+    //calculate amt saved
+    void savingsAmt(Item item) {
+        savings = item.getPrice() - item.getPrice() * item.getSale();
     }
 
     //subtract item value from receipt based on input quantity
@@ -75,6 +90,7 @@ public class Register {
 
         inventory.add(Item.grapes);
         inventory.add(Item.bananas);
+        inventory.add(Item.apples);
         inventory.add(Item.bread);
         inventory.add(Item.rice);
         inventory.add(Item.alaskan_cod);

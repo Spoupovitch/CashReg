@@ -45,6 +45,7 @@ public class Item {
     //produce
     static Item grapes = new Item("grapes", 1.60);
     static Item bananas = new Item("bananas", .99);
+    static Item apples = new Item("apples", .69);
     //wheat, grain, starch
     static Item bread = new Item("bread", 1.65, .15);
     static Item rice = new Item("rice", .69);

@@ -27,8 +27,7 @@ public class CashReg extends Application {
 
     private ObservableList<Item> itemsObsList;
     private ListView<Item> itemsView;
-    private Text subtotalText;
-    private Text totalText;
+    private Text subtotalText,  totalText, savingsText;
 
     private Scene home, checkout;
 
@@ -98,6 +97,13 @@ public class CashReg extends Application {
         bananasBtn.setPrefWidth(90);
         bananasBtn.setOnAction(e -> {
             register.sell("bananas", qty);
+            miscUpdate();
+        });
+
+        Button applesBtn = new Button("Apples");
+        applesBtn.setPrefWidth(90);
+        applesBtn.setOnAction(e -> {
+            register.sell("apples", qty);
             miscUpdate();
         });
 
@@ -224,6 +230,12 @@ public class CashReg extends Application {
         totalText.setTextAlignment(TextAlignment.RIGHT);
         totalText.getStyleClass().add("total-text");
 
+        savingsText = new Text();
+        savingsText.setText("You saved:\t\t" + String.format(
+                "%4.2f", register.getSavings()));
+        savingsText.setTextAlignment(TextAlignment.RIGHT);
+        savingsText.getStyleClass().add("total-text");
+
 
         //command bar elements
         Button backBtn = new Button("<");
@@ -253,14 +265,14 @@ public class CashReg extends Application {
         inventoryLayout.setAlignment(Pos.CENTER);
         inventoryLayout.setPrefColumns(3);
         inventoryLayout.setPrefTileWidth(90);
-        inventoryLayout.getChildren().addAll(grapesBtn, bananasBtn, breadBtn, riceBtn,
-            alaskanCodBtn, eggsBtn, lunchMeatBtn, groundBeefBtn, milkBtn, iceCreamBtn,
-            cheeseBtn, peanutButterBtn, orangeJuiceBtn, lotionBtn, soupBtn);
+        inventoryLayout.getChildren().addAll(grapesBtn, bananasBtn, applesBtn, breadBtn,
+            riceBtn, alaskanCodBtn, eggsBtn, lunchMeatBtn, groundBeefBtn, milkBtn,
+            iceCreamBtn, cheeseBtn, peanutButterBtn, orangeJuiceBtn, lotionBtn, soupBtn);
 
         //transaction layout shows items for purchase
         VBox transactionLayout = new VBox(15);
         transactionLayout.setAlignment(Pos.CENTER);
-        transactionLayout.getChildren().addAll(itemsView, subtotalText, totalText);
+        transactionLayout.getChildren().addAll(itemsView, subtotalText, totalText, savingsText);
 
         //command bar layout
         HBox commandBarLayout = new HBox(20);
@@ -294,6 +306,8 @@ public class CashReg extends Application {
                 + String.format("%4.2f", register.getSubtotal()));
         totalText.setText("Total:\t\t"
                 + String.format("%4.2f", register.getTotal()));
+        savingsText.setText("You saved:\t\t"
+                + String.format("%4.2f", register.getSavings()));
     }
 
     public class ItemFormatCell extends ListCell<Item> {
@@ -306,6 +320,9 @@ public class CashReg extends Application {
                 setText(item.getQuant() + " : " + item.getName() + "  . . .  " + String.format(
                     "%4.2f", item.getQuant() * item.getPrice() * (1 - item.getSale())));
                 setTextFill((item.getSale() == 0) ? Color.BLACK : Color.GREEN);
+                if (item.getQuant() == 0) {
+                    setTextFill(Color.GRAY);
+                }
             }
         }
     }
