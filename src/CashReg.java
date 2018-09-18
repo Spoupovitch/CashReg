@@ -201,15 +201,17 @@ public class CashReg extends Application {
 
         //transaction elements
         itemsObsList = FXCollections.observableArrayList(register.itemList);
+        /*
         itemsObsList.addListener(new ListChangeListener<Item>() {
             @Override
             public void onChanged(Change<? extends Item> c) {
             }
         });
+        */
 
         itemsView = new ListView<>(itemsObsList);
         itemsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        itemsView.setMaxWidth(150);
+        itemsView.setMaxWidth(165);
         itemsView.setEditable(true);
         itemsView.setCellFactory(new Callback<ListView<Item>, ListCell<Item>>() {
             @Override
@@ -231,8 +233,8 @@ public class CashReg extends Application {
         totalText.getStyleClass().add("total-text");
 
         savingsText = new Text();
-        savingsText.setText("You saved:\t\t" + String.format(
-                "%4.2f", register.getSavings()));
+        savingsText.setText("You saved:\t" + String.format(
+            "%4.2f", register.getSavings()));
         savingsText.setTextAlignment(TextAlignment.RIGHT);
         savingsText.getStyleClass().add("total-text");
 
@@ -288,7 +290,7 @@ public class CashReg extends Application {
         /*
         set main scene
         */
-        checkout = new Scene(mainLayout, 460, 400);
+        checkout = new Scene(mainLayout, 475, 450);
         checkout.getStylesheets().add("RegisterStyle.css");
     }
 
@@ -306,7 +308,7 @@ public class CashReg extends Application {
                 + String.format("%4.2f", register.getSubtotal()));
         totalText.setText("Total:\t\t"
                 + String.format("%4.2f", register.getTotal()));
-        savingsText.setText("You saved:\t\t"
+        savingsText.setText("You saved:\t"
                 + String.format("%4.2f", register.getSavings()));
     }
 

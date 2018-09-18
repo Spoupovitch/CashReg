@@ -52,14 +52,21 @@ public class Register {
             subtotal += item.getPrice() * (1 - item.getSale()) * qty;
         }
 
+        //update total savings if item on sale
         if (item.getSale() > 0) {
-            savingsAmt(item);
+            updateSavings(item, qty, true);
         }
     }
 
     //calculate amt saved
-    void savingsAmt(Item item) {
-        savings = item.getPrice() - item.getPrice() * item.getSale();
+    private void updateSavings(Item item, int qty, boolean sale) {
+        double amtSaved = item.getPrice() * item.getSale() * qty;
+
+        savings += (sale) ? amtSaved : -amtSaved;
+
+        if (savings < 0) {
+            savings = 0;
+        }
     }
 
     //subtract item value from receipt based on input quantity
@@ -70,7 +77,7 @@ public class Register {
         }
         else {
             int index = itemList.indexOf(item);
-            //remove item from item list
+            //catch exact & excess void qty, set item quantity to 0
             if (itemList.get(index).getQuant() <= qty) {
                 subtotal -= item.getPrice() * (1 - item.getSale()) * itemList.get(index).getQuant();
                 itemList.get(index).setQuant(0);
@@ -80,6 +87,11 @@ public class Register {
                 itemList.get(index).setQuant(itemList.get(index).getQuant() - qty);
                 //modify subtotal
                 subtotal -= item.getPrice() * (1 - item.getSale()) * qty;
+            }
+
+            //update total savings if item on sale
+            if (item.getSale() > 0) {
+                updateSavings(item, qty, false);
             }
         }
     }
